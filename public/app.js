@@ -84,6 +84,10 @@
     }
 
     window.db = firebase.firestore();
+    window.db.settings({
+      experimentalAutoDetectLongPolling: true,
+      merge: true
+    });
     setStatus("已連接 Firebase，正在載入文字雲...");
 
     window.db.collection(collectionName).onSnapshot(
@@ -98,7 +102,8 @@
         setStatus(`即時同步中，共 ${words.length} 個詞。點擊詞語可加一票。`);
       },
       (error) => {
-        setStatus(`Firestore 讀取失敗：${error.message}`);
+        render([]);
+        setStatus(`Firestore 讀取失敗：${error.message}。若使用微信掃碼，請改用手機瀏覽器開啟，或切換到可連線 Google/Firebase 的網路。`);
       }
     );
   });
@@ -110,7 +115,7 @@
     try {
       await addWord(word);
     } catch (error) {
-      setStatus(`新增失敗：${error.message}`);
+      setStatus(`新增失敗：${error.message}。請確認手機目前可以連線 Google/Firebase 服務。`);
     }
   });
 })();
