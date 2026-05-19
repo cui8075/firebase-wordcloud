@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Firebase 文字雲</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="/__/firebase/11.10.0/firebase-app-compat.js"></script>
+    <script defer src="/__/firebase/11.10.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/init.js"></script>
+    <script defer src="app.js"></script>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="compose" aria-label="新增文字">
+        <div>
+          <p class="kicker">Live Firestore Word Cloud</p>
+          <h1>文字雲</h1>
+        </div>
+        <form id="wordForm" class="word-form">
+          <input id="wordInput" name="word" type="text" maxlength="24" autocomplete="off" placeholder="輸入一個詞">
+          <button type="submit">加入</button>
+        </form>
+      </section>
+
+      <section class="board" aria-live="polite">
+        <div id="status" class="status">正在連接 Firebase...</div>
+        <div id="cloud" class="cloud" aria-label="文字雲"></div>
+      </section>
+    </main>
+  </body>
+</html>
