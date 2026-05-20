@@ -12,15 +12,20 @@
 
 | 文件 | 用途 |
 | --- | --- |
-| `public/index.html` | 静态网页入口 |
+| `index.html` | GitHub Pages 根入口 |
+| `wordcloud-firebase.html` | 兼容旧链接的文字云页面 |
+| `public/index.html` | Firebase Hosting / 静态站点入口 |
 | `public/app.js` | 前端提交、读取与渲染文字云 |
 | `public/styles.css` | 页面样式 |
 | `cloudfunctions/wordcloudApi/index.js` | CloudBase HTTP API |
 | `firebase.json` | Firebase Hosting 与 Firestore 配置 |
 | `firestore.rules` | Firestore 规则 |
-| `AGENTS.md` | Codex 项目工作规则 |
 
 ## 部署
+
+GitHub Pages：
+
+`https://cui8075.github.io/firebase-wordcloud/`
 
 当前前端调用 CloudBase 环境：
 
@@ -29,14 +34,3 @@
 Firebase 项目映射保存在 `.firebaserc`，默认项目为：
 
 `teacherstudy-2d61d`
-
-## 工作模式
-
-- 开始工作时对 Codex 说「开工」。
-- 结束工作时对 Codex 说「收工」。
-- 项目进度记录在 Obsidian：`D:\BaiduSyncdisk\Secondbrain\2026database\专案工作流程.md`。
-
-## 安全原则
-
-- 不提交 `.env`、API key、token、密码或管理凭证。
-- 学生资料只使用座号、班级代号或匿名词语，不保存真实姓名。
