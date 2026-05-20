@@ -1,11 +1,10 @@
 (function () {
-  const apiBase = "https://teacherstudy-d0gc2v3z7c74c1142.service.tcloudbase.com/api/wordcloud";
+  const collectionName = "wordcloud_words";
   const colors = ["#167b83", "#e6533f", "#c98822", "#3d7d45", "#4469a9", "#7c4a9d"];
   const cloud = document.querySelector("#cloud");
   const status = document.querySelector("#status");
   const form = document.querySelector("#wordForm");
   const input = document.querySelector("#wordInput");
-  let refreshTimer;
 
   function setStatus(message) {
     status.textContent = message;
@@ -15,24 +14,13 @@
     return value.trim().replace(/\s+/g, " ").slice(0, 24);
   }
 
+  function docIdFor(word) {
+    return encodeURIComponent(word.toLowerCase()).replace(/\./g, "%2E");
+  }
+
   function wordSize(count, maxCount) {
     const ratio = maxCount > 0 ? count / maxCount : 0;
     return Math.round(18 + ratio * 58);
-  }
-
-  async function requestJson(url, options) {
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options && options.headers ? options.headers : {})
-      }
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok || data.ok === false) {
-      throw new Error(data.error || `HTTP ${response.status}`);
-    }
-    return data;
   }
 
   function render(words) {
@@ -61,40 +49,64 @@
     });
   }
 
-  async function loadWords() {
-    const result = await requestJson(apiBase);
-    const words = result.words || [];
-    render(words);
-    setStatus(`已同步，共 ${words.length} 個詞。點擊詞語可加一票。`);
-  }
-
   async function addWord(rawWord) {
     const word = normalizeWord(rawWord);
     if (!word) {
       input.focus();
       return;
     }
-    await requestJson(apiBase, {
-      method: "POST",
-      body: JSON.stringify({ text: word })
+
+    const ref = window.db.collection(collectionName).doc(docIdFor(word));
+    await window.db.runTransaction(async (transaction) => {
+      const snapshot = await transaction.get(ref);
+      const now = firebase.firestore.FieldValue.serverTimestamp();
+      if (snapshot.exists) {
+        transaction.update(ref, {
+          count: firebase.firestore.FieldValue.increment(1),
+          updatedAt: now
+        });
+        return;
+      }
+
+      transaction.set(ref, {
+        text: word,
+        count: 1,
+        createdAt: now,
+        updatedAt: now
+      });
     });
-    await loadWords();
   }
 
-  async function init() {
-    try {
-      setStatus("正在連接 CloudBase...");
-      await loadWords();
-      refreshTimer = window.setInterval(() => {
-        loadWords().catch((error) => {
-          setStatus(`CloudBase 讀取失敗：${error.message}`);
-        });
-      }, 3000);
-    } catch (error) {
-      render([]);
-      setStatus(`CloudBase 連接失敗：${error.message}`);
+  window.addEventListener("load", () => {
+    if (!window.firebase || !firebase.apps.length) {
+      setStatus("Firebase 尚未初始化。請用 Firebase Hosting 或 Hosting Emulator 開啟此頁。");
+      return;
     }
-  }
+
+    window.db = firebase.firestore();
+    window.db.settings({
+      experimentalAutoDetectLongPolling: true,
+      merge: true
+    });
+    setStatus("已連接 Firebase，正在載入文字雲...");
+
+    window.db.collection(collectionName).onSnapshot(
+      (snapshot) => {
+        const words = snapshot.docs
+          .map((doc) => ({ id: doc.id, ...doc.data() }))
+          .filter((word) => word.text)
+          .sort((a, b) => (b.count || 0) - (a.count || 0))
+          .slice(0, 80);
+
+        render(words);
+        setStatus(`即時同步中，共 ${words.length} 個詞。點擊詞語可加一票。`);
+      },
+      (error) => {
+        render([]);
+        setStatus(`Firestore 讀取失敗：${error.message}。若使用微信掃碼，請改用手機瀏覽器開啟，或切換到可連線 Google/Firebase 的網路。`);
+      }
+    );
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -103,15 +115,7 @@
     try {
       await addWord(word);
     } catch (error) {
-      setStatus(`新增失敗：${error.message}`);
+      setStatus(`新增失敗：${error.message}。請確認手機目前可以連線 Google/Firebase 服務。`);
     }
   });
-
-  window.addEventListener("beforeunload", () => {
-    if (refreshTimer) {
-      window.clearInterval(refreshTimer);
-    }
-  });
-
-  window.addEventListener("load", init);
 })();
