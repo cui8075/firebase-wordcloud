@@ -3,18 +3,16 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Firebase 文字雲</title>
+    <title>CloudBase 文字雲</title>
     <link rel="stylesheet" href="styles.css">
-    <script defer src="/__/firebase/11.10.0/firebase-app-compat.js"></script>
-    <script defer src="/__/firebase/11.10.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/init.js"></script>
-    <script defer src="app.js?v=20260519-1710"></script>
+    <script defer src="https://static.cloudbase.net/cloudbase-js-sdk/latest/cloudbase.full.js"></script>
+    <script defer src="app.js?v=20260520-1036"></script>
   </head>
   <body>
     <main class="shell">
       <section class="compose" aria-label="新增文字">
         <div>
-          <p class="kicker">Live Firestore Word Cloud</p>
+          <p class="kicker">Live CloudBase Word Cloud</p>
           <h1>文字雲</h1>
         </div>
         <form id="wordForm" class="word-form">
@@ -24,7 +22,7 @@
       </section>
 
       <section class="board" aria-live="polite">
-        <div id="status" class="status">正在連接 Firebase...</div>
+        <div id="status" class="status">正在連接 CloudBase...</div>
         <div id="cloud" class="cloud" aria-label="文字雲"></div>
       </section>
     </main>
