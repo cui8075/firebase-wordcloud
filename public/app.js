@@ -41,7 +41,7 @@
     if (!words.length) {
       const empty = document.createElement("div");
       empty.className = "empty";
-      empty.textContent = "還沒有詞，先加入第一個。";
+      empty.textContent = "还没有词，先加入第一个。";
       cloud.append(empty);
       return;
     }
@@ -65,7 +65,7 @@
     const result = await requestJson(apiBase);
     const words = result.words || [];
     render(words);
-    setStatus(`已同步，共 ${words.length} 個詞。點擊詞語可加一票。`);
+    setStatus(`已同步，共 ${words.length} 个词。点击词语可加一票。`);
   }
 
   async function addWord(rawWord) {
@@ -83,16 +83,16 @@
 
   async function init() {
     try {
-      setStatus("正在連接 CloudBase...");
+      setStatus("正在连接 CloudBase...");
       await loadWords();
       refreshTimer = window.setInterval(() => {
         loadWords().catch((error) => {
-          setStatus(`CloudBase 讀取失敗：${error.message}`);
+          setStatus(`CloudBase 读取失败：${error.message}`);
         });
       }, 3000);
     } catch (error) {
       render([]);
-      setStatus(`CloudBase 連接失敗：${error.message}`);
+      setStatus(`CloudBase 连接失败：${error.message}`);
     }
   }
 
@@ -103,7 +103,7 @@
     try {
       await addWord(word);
     } catch (error) {
-      setStatus(`新增失敗：${error.message}`);
+      setStatus(`新增失败：${error.message}`);
     }
   });
 

@@ -59,7 +59,7 @@ async function addWord(req, res) {
   const body = rawBody ? JSON.parse(rawBody) : {};
   const word = normalizeWord(body.text);
   if (!word) {
-    send(res, 400, { ok: false, error: "請輸入文字" });
+    send(res, 400, { ok: false, error: "请输入文字" });
     return;
   }
 
