@@ -1,3 +1,31 @@
+# 系统文件
+desktop.ini
+Thumbs.db
+.DS_Store
+*.tmp
+~$*
+*.baiduyun.uploading.cfg
+
+# 敏感资料
+.env
+.env.*
+*.key
+credentials.*
+secrets.*
+
+# AI agent 本地设置
+.claude/
+.codex/
+
+# Node.js
+node_modules/
+package-lock.json
+
+# Firebase / CloudBase
 firebase-debug.log
 .firebase/
-node_modules/
+
+# 构建输出
+dist/
+build/
+.cache/
